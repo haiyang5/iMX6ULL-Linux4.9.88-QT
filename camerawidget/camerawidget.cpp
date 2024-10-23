@@ -10,6 +10,13 @@
 #include "simplemessagebox/simplemessagebox.h"
 #include "commonhelper.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <QDebug>
+
+
 CameraWidget::CameraWidget(QWidget *parent) : QDialog(parent, Qt::WindowStaysOnTopHint)
 {
     initUi();
@@ -19,6 +26,9 @@ CameraWidget::CameraWidget(QWidget *parent) : QDialog(parent, Qt::WindowStaysOnT
 
 CameraWidget::~CameraWidget()
 {
+    m_thread.quit();
+    m_thread.wait();
+    QProcess::execute("rmmod /driver/adxl345_drv_i2c.ko");
 }
 
 void CameraWidget::initUi()
@@ -77,6 +87,20 @@ void CameraWidget::initCtrl()
     updateCamInfo();
 
     m_cameraViewfinder.installEventFilter(this);
+
+    //碰撞监测
+    QProcess::execute("insmod /driver/adxl345_drv_i2c.ko");
+    m_thread.start();
+    connect(&m_thread, &HitThread::readReady, this, &CameraWidget::hitRead);
+
+}
+
+void CameraWidget::hitRead(int hitFlag)
+{
+//    qDebug()<< "hitFlag:" << hitFlag;
+    if (hitFlag == 1)
+        SimpleMessageBox::infomationMessageBox("请注意：发生碰撞！");
+    m_thread.check = 0;
 }
 
 void CameraWidget::updateCamInfo()

@@ -62,7 +62,7 @@ MusicWidget::MusicWidget(const QString &path, QWidget *parent) : QDialog(parent)
     initUi();
     initCtrl();
     loadSong(path);
-    setModal(true);
+    setModal(true);     //设置对话框（QDialog 或其子类）为模态（modal）状态
 }
 
 MusicWidget::~MusicWidget()
@@ -84,6 +84,10 @@ void MusicWidget::initUi()
     pMainLayout->setContentsMargins(20, 20, 20, 0);
     setLayout(pMainLayout);
     CommonHelper::setStyleSheet(":/misc/musicwidget/style/default.qss", this);
+    QPixmap pixmap(":/misc/resource/image/background.jpg");
+    QPalette palette;
+    palette.setBrush(backgroundRole(), QBrush(pixmap.scaled(1024, 600, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+    setPalette(palette);
 }
 
 QLayout *MusicWidget::initLayout1()
@@ -169,25 +173,29 @@ QWidget *MusicWidget::songListWidget()
 {
     m_tableWidget.setObjectName("listWidget");
 
+
+    // 初始化表格行为0行，但预留了5列的空间
     m_tableWidget.setRowCount(0);
     m_tableWidget.setColumnCount(5);
 
     QStringList headers;
     headers << "" << "标题" << "歌手" << "专辑" << "时间";
-    m_tableWidget.setHorizontalHeaderLabels(headers);
+    m_tableWidget.setHorizontalHeaderLabels(headers);       //设置水平表头
 
-    m_tableWidget.setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_tableWidget.setSelectionMode(QTableView::SingleSelection);
-    m_tableWidget.setSelectionBehavior(QTableView::SelectRows);
-    m_tableWidget.horizontalHeader()->setHighlightSections(false);
-    m_tableWidget.horizontalHeader()->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    m_tableWidget.verticalHeader()->hide();
-    m_tableWidget.verticalHeader()->setDefaultSectionSize(45);
+    m_tableWidget.setEditTriggers(QAbstractItemView::NoEditTriggers);   // 禁止所有默认的编辑触发条件，使得用户不能编辑表格中的任何单元格
+    m_tableWidget.setSelectionMode(QTableView::SingleSelection);        // 设置选择模式为单选
+    m_tableWidget.setSelectionBehavior(QTableView::SelectRows);         // 设置选择行为为选择整行
+    m_tableWidget.horizontalHeader()->setHighlightSections(false);      // 禁止高亮显示水平表头的节（部分），这通常用于去除鼠标悬停时的颜色变化
+    m_tableWidget.horizontalHeader()->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);        // 设置水平表头内容的默认对齐方式为左对齐和垂直居中
+    m_tableWidget.verticalHeader()->hide();                         // 隐藏垂直表头
+    m_tableWidget.verticalHeader()->setDefaultSectionSize(45);      // 设置垂直表头中每个节（行）的默认大小为45像素（尽管它被隐藏了）
     m_tableWidget.setSortingEnabled(false);
-    m_tableWidget.setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_tableWidget.setFocusPolicy(Qt::NoFocus);
-    QScroller::grabGesture(&m_tableWidget, QScroller::LeftMouseButtonGesture);
+    m_tableWidget.setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);     // 设置垂直滚动模式为每像素滚动，提供更平滑的滚动体验
+    m_tableWidget.setFocusPolicy(Qt::NoFocus);                                  // 设置焦点策略为不接收焦点，这意味着表格将不会响应键盘导航
+    QScroller::grabGesture(&m_tableWidget, QScroller::LeftMouseButtonGesture);  // 允许通过左鼠标按钮的拖动手势来滚动表格，这是Qt Scroller框架提供的功能
 
+    // 设置第二列的宽度为可拉伸，即它会根据需要填充剩余空间
+    // 分别设置第一、三、第四和第五列的宽度为固定值，并禁止用户改变其宽度
     m_tableWidget.horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
     m_tableWidget.setColumnWidth(0, 20);
     m_tableWidget.horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -203,8 +211,11 @@ QWidget *MusicWidget::songListWidget()
 
 int MusicWidget::loadSong(const QString &path)
 {
-    QStringList nameFilters = {"*.mp3"};
+    QStringList nameFilters = {"*.mp3"};    //定义文件过滤器
+    //获取文件信息列表：根据提供的路径（path）、文件过滤器（nameFilters）以及选项（QDir::Files和QDir::Name）来获取文件信息列表
+    //QDir::Files表示只返回文件（不包括目录），QDir::Name表示按照文件名排序返回的列表
     auto infoList = QDir(path).entryInfoList(nameFilters, QDir::Files, QDir::Name);
+    //异步处理文件信息：使用QtConcurrent::mapped来异步地对infoList中的每个QFileInfo对象应用getMp3BaseInfo函数
     m_watcher.setFuture(QtConcurrent::mapped(infoList, getMp3BaseInfo));
     return infoList.count();
 }
@@ -222,6 +233,7 @@ void MusicWidget::addSongToList(const QString &title, const QString &singer, con
     m_tableWidget.setItem(cnt, 4, new QTableWidgetItem(time));
 }
 
+//切歌后将新歌曲前图表转换为图标
 void MusicWidget::setSongIconAtList(int index, const QIcon &icon)
 {
     if (index < 0 || index >= m_tableWidget.rowCount())
@@ -233,6 +245,7 @@ void MusicWidget::setSongIconAtList(int index, const QIcon &icon)
     tableWidgetItem->setText("");
 }
 
+//切歌后将原歌曲前图表转换为数字
 void MusicWidget::restoreSongIconAtList(int index)
 {
     if (index < 0 || index >= m_tableWidget.rowCount())
@@ -256,6 +269,7 @@ void MusicWidget::addMp3Info(int index)
     m_playlist.addMedia(QUrl::fromLocalFile(info.filePath));
 }
 
+//手动切歌
 void MusicWidget::cellDoubleClicked(int row, int column)
 {
     Q_UNUSED(column);
@@ -266,46 +280,17 @@ void MusicWidget::cellDoubleClicked(int row, int column)
     }
 }
 
+//媒体时长发生变化（手动切歌或自动循环时触发）
 void MusicWidget::durationChanged(qint64 duration)
 {
-    m_progressBarSlider.setRange(0, duration);
+    m_progressBarSlider.setRange(0, duration);      //设置进度条长度
     m_totaTimelbl.setText(QTime::fromMSecsSinceStartOfDay(duration).toString("mm:ss"));
 
     auto tableWidgetItem = m_tableWidget.item(m_playlist.currentIndex(), 4);
     tableWidgetItem->setText(QTime::fromMSecsSinceStartOfDay(duration).toString("mm:ss"));
 }
 
-void MusicWidget::positionChanged(qint64 position)
-{
-    if (!m_progressBarIsPressed)
-        m_progressBarSlider.setValue(position);
-
-    m_curTimeLbl.setText(QTime::fromMSecsSinceStartOfDay(position).toString("mm:ss"));
-}
-
-void MusicWidget::progressBarSliderPressed()
-{
-    m_progressBarIsPressed = true;
-}
-
-void MusicWidget::progressBarSliderReleased()
-{
-    m_progressBarIsPressed = false;
-
-    m_player.setPosition(m_progressBarSlider.value());
-
-    if (m_player.state() == QMediaPlayer::PausedState)
-        m_player.play();
-}
-
-void MusicWidget::volumeBarSliderValueChanged(int value)
-{
-    m_player.setVolume(value);
-
-    if (m_player.isMuted())
-        m_player.setMuted(false);
-}
-
+//播放列表状态改变：播放条目改变
 void MusicWidget::currentIndexChanged(int position)
 {
     if (m_preMusicIndex != -1)
@@ -320,6 +305,46 @@ void MusicWidget::currentIndexChanged(int position)
     m_coverLbl.setPixmap(m_musicVector.at(position).cover.scaled(96, 96, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
 }
 
+//播放进度改变（正常播放或拖动进度条松开时触发）：修改进度数值
+void MusicWidget::positionChanged(qint64 position)
+{
+    if (!m_progressBarIsPressed) {    //非人为拖动，自然
+        m_progressBarSlider.setValue(position);
+        m_curTimeLbl.setText(QTime::fromMSecsSinceStartOfDay(position).toString("mm:ss"));
+    }
+    else {      //人为拖动时显示拖动位置
+        m_curTimeLbl.setText(QTime::fromMSecsSinceStartOfDay(m_progressBarSlider.value()).toString("mm:ss"));
+    }
+}
+
+//进度条按下：设置
+void MusicWidget::progressBarSliderPressed()
+{
+    m_progressBarIsPressed = true;
+}
+//进度条松开
+void MusicWidget::progressBarSliderReleased()
+{
+    m_progressBarIsPressed = false;
+
+    m_player.setPosition(m_progressBarSlider.value());      //设置播放器播放进度
+
+    if (m_player.state() == QMediaPlayer::PausedState)
+        m_player.play();
+}
+//音量条改变
+void MusicWidget::volumeBarSliderValueChanged(int value)
+{
+    m_player.setVolume(value);
+
+    if (m_player.isMuted())
+        m_player.setMuted(false);
+    if (value == 0 && !m_player.isMuted())
+        m_player.setMuted(true);
+
+}
+
+//播放器状态改变：播放状态改变
 void MusicWidget::musicStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::PlayingState) {
@@ -330,6 +355,7 @@ void MusicWidget::musicStateChanged(QMediaPlayer::State state)
     }
 }
 
+//播放器状态改变：静音状态改变
 void MusicWidget::mutedChanged(bool muted)
 {
     if (muted) {
@@ -340,6 +366,7 @@ void MusicWidget::mutedChanged(bool muted)
     }
 }
 
+//按键控制
 void MusicWidget::preBtnClicked()
 {
     m_playlist.previous();

@@ -10,7 +10,7 @@
 UltrasonicwaveThread::UltrasonicwaveThread(const QString &path) : QObject(NULL)
 {
     m_path = path;
-
+    qDebug()<< "path:" << path;
     moveToThread(&m_thread);
 
     connect(&m_thread, &QThread::started, this, &UltrasonicwaveThread::tmain);

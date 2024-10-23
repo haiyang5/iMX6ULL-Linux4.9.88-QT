@@ -28,7 +28,7 @@ class WeatherWidget : public QDialog
 {
     Q_OBJECT
 
-    const QString locationName     = QString("南京");
+    const QString locationName     = QString("重庆");
     const QString locationID       = QString("101190101");
     const QString userKey          = QString("16a876594a994d3da5a103f8f1f8daca");
 

@@ -20,6 +20,7 @@ SOURCES += \
     backlightwidget/backlightwidget.cpp \
     calculatorwidget/calculatorwidget.cpp \
     camerawidget/camerawidget.cpp \
+    camerawidget/hitthread.cpp \
     colordashboard/colordashboard.cpp \
     dynamicline/dynamicline.cpp \
     electricitywidget/electricitywidget.cpp \
@@ -30,6 +31,7 @@ SOURCES += \
     main.cpp \
     mainwindowctrl.cpp \
     mainwindowui.cpp \
+    mapwidget/iconpushbutton.cpp \
     mapwidget/mapwidget.cpp \
     musicwidget/musicwidget.cpp \
     oledwidget/drawwidget.cpp \
@@ -55,6 +57,7 @@ HEADERS += \
     backlightwidget/backlightwidget.h \
     calculatorwidget/calculatorwidget.h \
     camerawidget/camerawidget.h \
+    camerawidget/hitthread.h \
     colordashboard/colordashboard.h \
     commonhelper.h \
     dynamicline/dynamicline.h \
@@ -64,6 +67,7 @@ HEADERS += \
     infraredwidget/infraredwidget.h \
     keywidget/keywidget.h \
     mainwindow.h \
+    mapwidget/iconpushbutton.h \
     mapwidget/mapwidget.h \
     musicwidget/musicwidget.h \
     oledwidget/drawwidget.h \

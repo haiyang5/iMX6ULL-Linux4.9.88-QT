@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/misc">
-        <file>resource/image/background.jpeg</file>
         <file>resource/image/point.png</file>
         <file>resource/style/default.qss</file>
         <file>topwidget/image/battery.png</file>
@@ -212,5 +211,8 @@
         <file>mapwidget/style/default.qss</file>
         <file>mapwidget/images/loading.gif</file>
         <file>temperaturewidget/style/default.qss</file>
+        <file>mapwidget/images/zoom_in.png</file>
+        <file>mapwidget/images/zoom_out.png</file>
+        <file>resource/image/background.jpg</file>
     </qresource>
 </RCC>

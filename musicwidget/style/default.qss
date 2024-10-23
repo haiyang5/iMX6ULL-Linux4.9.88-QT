@@ -1,7 +1,3 @@
-QWidget {
-    background-color: rgb(30,30,30);
-}
-
 QLabel#nameLbl {
     font: normal normal 35px;
     color: white;
@@ -76,11 +72,11 @@ QSlider::handle:horizontal {
 }
 
 QTableWidget {
-    color: rgb(203, 203, 201);
-    background: rgb(30,30,30);
+    color: rgb(180, 255, 150);
+    background: rgb(100, 100, 100, 50%);
     border: 1px solid transparent;
     border-top: 2px solid rgb(60, 60, 60);
-    gridline-color: rgb(30,30,30);
+    gridline-color: rgb(200,200,200);
     outline: none;
 }
 
@@ -92,7 +88,7 @@ QHeaderView::section {
 
 QTableWidget::item::selected {
     color:white;
-    background: rgb(48, 49, 44);
+    background: rgb(48, 120, 44);
 }
 
 QScrollBar::handle:vertical {

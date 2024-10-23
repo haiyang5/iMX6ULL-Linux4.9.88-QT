@@ -37,6 +37,9 @@ public:
 signals:
 
 private:
+    static constexpr int m_screenHeigh = 600;
+    static constexpr int m_screenWidth = 1024;
+
     void initUi();
     void initCtrl();
 

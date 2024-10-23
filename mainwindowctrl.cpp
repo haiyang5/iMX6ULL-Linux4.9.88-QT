@@ -4,11 +4,11 @@
 #include <QLabel>
 #include <QDateTime>
 #include <QKeyEvent>
+#include <QDebug>
 
 void MainWindow::initCtrl()
 {
     updateSysInfo();
-
     m_pMusicWidget->hide();
     m_pMusicWidget->setFixedSize(this->size());
     m_pMusicWidget->setCursor(QCursor(QPixmap(":/misc/resource/image/point.png"), -1, -1));

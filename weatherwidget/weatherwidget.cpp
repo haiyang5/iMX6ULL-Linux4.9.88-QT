@@ -90,8 +90,8 @@ QWidget *WeatherWidget::initCurrentWeatherUi()
     m_listUpdetimeLbl.setAlignment(Qt::AlignRight);
     m_airQualityLbl.setAlignment(Qt::AlignRight);
 
-    m_listUpdetimeLbl.setText("2022-01-01 19:31");
-    m_airQualityLbl.setText("AQI 良 - 南京");
+    m_listUpdetimeLbl.setText("2024-10-14 19:31");
+    m_airQualityLbl.setText("AQI 良 - 重庆");
 
     // 天气简要描述 ========================================
     m_iconLbl.setObjectName("weather_iconLbl");

@@ -12,6 +12,10 @@
 #include <QScopedPointer>
 #include <QTimer>
 
+#include <QObject>
+#include <QThread>
+#include "hitthread.h"
+
 class CameraWidget : public QDialog
 {
     Q_OBJECT
@@ -30,6 +34,7 @@ protected slots:
     void takeVedioBtnClicked();
     void camResBoxChanged(int index);
     void displayCameraError();
+    void hitRead(int);
 
 private:
     void initUi();
@@ -49,6 +54,8 @@ private:
     QScopedPointer<QCameraImageCapture> m_imageCapture;
     QScopedPointer<QCamera> m_camera;
     QTimer m_timer;
+
+    HitThread m_thread;
 };
 
 #endif // CAMERAWIDGET_H
